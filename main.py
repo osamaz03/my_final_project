@@ -34,6 +34,35 @@ class InvoiceManager(QWidget):
         self.product_quantity.setFont(QFont("San Francisco",14))
         input_layout.addWidget(self.product_quantity)
 
+        self.add_btn = QPushButton("Add")
+        self.add_btn.clicked.connect(self.add)
+        self.add_btn.setFont(QFont("San Francisco",14))
+        input_layout.addWidget(self.add_btn)
+
+
+        # the information table
+        self.table = QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["Product Name" ,"Product Price","Product Quantity" ,"Total"])
+        layout.addWidget(self.table)
+
+        #the total text label and the total button
+        self.total_label = QLabel("The Total: ")
+        self.total_label.setFont(QFont("San Francisco",14))
+        total_layout.addWidget(self.total_label)
+
+        self.total_btn = QPushButton("Total")
+        self.total_btn.clicked.connect(self.total)
+        self.total_btn.setFont(QFont("San Francisco",14))
+        total_layout.addWidget(self.total_btn)
+
+        #adding the other layout to the main one
+        layout.addLayout(input_layout)
+        layout.addLayout(total_layout)
+        self.setLayout(layout)
+
+
+
 
 
 # to run the app
