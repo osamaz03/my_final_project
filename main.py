@@ -62,6 +62,50 @@ class InvoiceManager(QWidget):
         self.setLayout(layout)
 
 
+    def add(self):
+        name = self.product_name.text()
+        price = self.product_price.text()
+        qty = self.product_quantity.text()
+
+
+        # if the user did not fill in all fields show error
+        if not name or not price or not qty:
+            QMessageBox.warning(self,"Error","Please fill in all fields")
+            return
+
+        #error handling
+        try:
+            price = float(price)
+            qty = int(qty)
+            total = price * qty
+        except ValueError:
+            QMessageBox.warning(self,"Error","Please add a valid number")
+        except Exception as e:
+            QMessageBox.warning(self,"Error",f"Error: {e}")
+
+
+
+        row = self.table.rowCount() #creating the row
+        self.table.insertRow(row) # applying the row in the table
+
+        # adding the item to the table
+        self.table.setItem(row,0,QTableWidgetItem(name))
+        self.table.setItem(row,1,QTableWidgetItem(f"{price:.2f}"))
+        self.table.setItem(row,2,QTableWidgetItem(str(qty)))
+        self.table.setItem(row,3,QTableWidgetItem(f"{total:.2f}"))
+
+
+        #to clear the input
+        self.product_name.clear()
+        self.product_price.clear()
+        self.product_quantity.clear()
+
+
+
+
+
+
+
 
 
 
