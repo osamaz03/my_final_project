@@ -56,6 +56,11 @@ class InvoiceManager(QWidget):
         self.total_btn.setFont(QFont("San Francisco",14))
         total_layout.addWidget(self.total_btn)
 
+        self.delete_btn = QPushButton("Delete")
+        self.delete_btn.setFont(QFont("San Francisco",14))
+        self.delete_btn.clicked.connect(self.delete)
+        input_layout.addWidget(self.delete_btn)
+
         #adding the other layout to the main one
         layout.addLayout(input_layout)
         layout.addLayout(total_layout)
@@ -101,8 +106,25 @@ class InvoiceManager(QWidget):
         self.product_quantity.clear()
 
 
+    def total(self):
+        sum_total = 0
 
+        for i in range(self.table.rowCount()):
+            try:
+                sum_total += float(self.table.item(i,3).text())
+            except Exception as e:
+                QMessageBox.warning(self,"Error",f" Error {e}")
+                return
 
+        self.total_label.setText(f"The Total:{sum_total} Euro")
+
+    def delete(self):
+        row = self.table.currentRow()
+
+        if row != -1:
+            self.table.removeRow(row)
+        else:
+            QMessageBox.warning(self,"Error","Please select a row")
 
 
 
