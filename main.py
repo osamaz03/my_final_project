@@ -23,43 +23,125 @@ class InvoiceManager(QWidget):
         self.product_name.setPlaceholderText("P.Name")
         self.product_name.setFont(QFont("San Francisco",14))
         input_layout.addWidget(self.product_name)
+        self.product_name.setStyleSheet("""
+                QLineEdit {
+                    background: #FFFFFF;
+                    border-radius: 10px;
+                    padding: 10px;
+                    border: 2px solid #D3DAD9;
+                }
+            """)
 
         self.product_price = QLineEdit()
         self.product_price.setPlaceholderText("P.Price")
         self.product_price.setFont(QFont("San Francisco",14))
         input_layout.addWidget(self.product_price)
+        self.product_price.setStyleSheet("""
+                QLineEdit {
+                    background: #FFFFFF;
+                    border-radius: 10px;
+                    padding: 10px;
+                    border: 2px solid #D3DAD9;
+                }
+            """)
 
         self.product_quantity = QLineEdit()
         self.product_quantity.setPlaceholderText("P.Quantity")
         self.product_quantity.setFont(QFont("San Francisco",14))
         input_layout.addWidget(self.product_quantity)
+        self.product_quantity.setStyleSheet("""
+                QLineEdit {
+                    background: #FFFFFF;
+                    border-radius: 10px;
+                    padding: 10px;
+                    border: 2px solid #D3DAD9;
+                }
+            """)
 
         self.add_btn = QPushButton("Add")
         self.add_btn.clicked.connect(self.add)
         self.add_btn.setFont(QFont("San Francisco",14))
         input_layout.addWidget(self.add_btn)
-
+        self.add_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #715A5A;
+                    color: white;
+                    border-radius: 10px;
+                    padding: 10px 24px;
+                }
+                QPushButton:hover {
+                    background-color: #44444E;
+                }
+            """)
 
         # the information table
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["Product Name" ,"Product Price","Product Quantity" ,"Total"])
+        self.table.resizeColumnsToContents()
         layout.addWidget(self.table)
+        self.table.setStyleSheet("""
+                QTableWidget {
+                    background: #FFFFFF;
+                    border-radius: 12px;
+                    font-size: 15px;
+                    color: #395B64;
+                    gridline-color: #D3DAD9;
+                }
+                QHeaderView::section {
+                    background: #F5F7FA;
+                    color: #395B64;
+                    font-weight: bold;
+                    border-radius: 8px;
+                    padding: 6px;
+                }
+            """)
 
         #the total text label and the total button
         self.total_label = QLabel("The Total: ")
         self.total_label.setFont(QFont("San Francisco",14))
         total_layout.addWidget(self.total_label)
+        self.total_label.setStyleSheet("""
+                QLabel {
+                    background: #E7E7E7;
+                    border-radius: 10px;
+                    padding: 10px 20px;
+                    color: #4F8A8B;
+                    border: 2px solid #D3DAD9;
+                }
+            """)
 
         self.total_btn = QPushButton("Total")
         self.total_btn.clicked.connect(self.total)
         self.total_btn.setFont(QFont("San Francisco",14))
         total_layout.addWidget(self.total_btn)
+        self.total_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #715A5A;
+                    color: white;
+                    border-radius: 10px;
+                    padding: 10px 24px;
+                }
+                QPushButton:hover {
+                    background-color: #44444E;
+                }
+            """)
 
         self.delete_btn = QPushButton("Delete")
         self.delete_btn.setFont(QFont("San Francisco",14))
         self.delete_btn.clicked.connect(self.delete)
         input_layout.addWidget(self.delete_btn)
+        self.delete_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #715A5A;
+                    color: white;
+                    border-radius: 10px;
+                    padding: 10px 24px;
+                }
+                QPushButton:hover {
+                    background-color: #44444E;
+                }
+            """)
 
         #adding the other layout to the main one
         layout.addLayout(input_layout)
