@@ -1,4 +1,6 @@
 import sys
+import csv
+import os
 from PyQt5.QtWidgets import (QApplication,QVBoxLayout,QHBoxLayout,QWidget,QPushButton,QLineEdit,QLabel,QTableWidget,QTableWidgetItem,QMessageBox)
 from PyQt5.QtGui import QPalette , QFont , QColor
 
@@ -147,6 +149,7 @@ class InvoiceManager(QWidget):
         layout.addLayout(input_layout)
         layout.addLayout(total_layout)
         self.setLayout(layout)
+        self.load_file()
 
 
     def add(self):
@@ -155,10 +158,14 @@ class InvoiceManager(QWidget):
         qty = self.product_quantity.text()
 
 
+
+
         # if the user did not fill in all fields show error
         if not name or not price or not qty:
             QMessageBox.warning(self,"Error","Please fill in all fields")
             return
+
+
 
         #error handling
         try:
@@ -169,6 +176,10 @@ class InvoiceManager(QWidget):
             QMessageBox.warning(self,"Error","Please add a valid number")
         except Exception as e:
             QMessageBox.warning(self,"Error",f"Error: {e}")
+
+        if price < 0 or qty < 0:
+            QMessageBox.warning(self,"Error","The number must be greater then Zero")
+            return
 
 
 
@@ -186,6 +197,7 @@ class InvoiceManager(QWidget):
         self.product_name.clear()
         self.product_price.clear()
         self.product_quantity.clear()
+        self.save_file()
 
 
     def total(self):
@@ -207,6 +219,42 @@ class InvoiceManager(QWidget):
             self.table.removeRow(row)
         else:
             QMessageBox.warning(self,"Error","Please select a row")
+        self.save_file()
+
+
+    # save the app data in a file
+    def save_file(self):
+        rows = self.table.rowCount()
+        cols = self.table.columnCount()
+
+        with open("invoice.txt","w",newline="",encoding="utf-8") as f:
+            writer = csv.writer(f)
+
+            for row in range(rows):
+                row_data = []
+                for col in range(cols):
+                    items = self.table.item(row,col)
+                    if items:
+                        row_data.append(items.text())
+                writer.writerow(row_data)
+
+
+    # load the file
+    def load_file(self):
+        if not os.path.exists("invoice.txt"):
+            return
+
+        self.table.setRowCount(0)
+
+        with open("invoice.txt","r",encoding="utf-8") as f:
+            reader = csv.reader(f)
+
+            for row_v in reader:
+                row_index = self.table.rowCount()
+                self.table.insertRow(row_index)                #from line 252 to 256 AI helped me
+                for c,values in enumerate(row_v):
+                    self.table.setItem(row_index,c,QTableWidgetItem(values))
+
 
 
 
