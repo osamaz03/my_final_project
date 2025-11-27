@@ -1,22 +1,22 @@
-1. Smart Invoice – PyQt5 Application
+## Smart Invoice – PyQt5 Application
 
 Smart Invoice is a simple Python/PyQt5 desktop application that allows users to add products, calculate totals, and save invoice data automatically.
 The app loads saved data on startup and offers a clean and modern interface.
 
-2. Features
+## Features
 - Add product name, price, and quantity.
 - Automatic calculation of each item total and overall invoice total.
 - Save and load data from invoice.txt.
 - Delete selected rows easily.
 - Clean UI with PyQt5 stylesheets.
 
-3. Technologies Used
+## Technologies Used
 - Python 3
 - PyQt5
 - CSV (built-in)
 - OS (built-in)
 
-4. File Structure
+## File Structure
 main.py  
 invoice.txt  
 requirements.txt  
