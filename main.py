@@ -201,8 +201,10 @@ class InvoiceManager(QWidget):
 
 
     def total(self):
-        sum_total = 0
+        sum_total = 0 # to collect the total
 
+
+        # adding the total from the column number 3
         for i in range(self.table.rowCount()):
             try:
                 sum_total += float(self.table.item(i,3).text())
@@ -210,11 +212,12 @@ class InvoiceManager(QWidget):
                 QMessageBox.warning(self,"Error",f" Error {e}")
                 return
 
-        self.total_label.setText(f"The Total:{sum_total} Euro")
+        self.total_label.setText(f"The Total:{sum_total} Euro") #apply the total in the label
 
     def delete(self):
         row = self.table.currentRow()
 
+        #if there is a selected row
         if row != -1:
             self.table.removeRow(row)
         else:
