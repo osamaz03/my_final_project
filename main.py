@@ -3,10 +3,11 @@ import csv
 import os
 from PyQt5.QtWidgets import (QApplication,QVBoxLayout,QHBoxLayout,QWidget,QPushButton,QLineEdit,QLabel,QTableWidget,QTableWidgetItem,QMessageBox)
 from PyQt5.QtGui import QPalette , QFont , QColor
+from PyQt5.QtCore import Qt
 
 
 class InvoiceManager(QWidget):
-    def __init__(self):
+    def __init__(self,username = None):
         super().__init__()
         self.setWindowTitle("Smart Invoice")  #the app title
         self.setGeometry(300,200,800,500) #app size
@@ -19,6 +20,9 @@ class InvoiceManager(QWidget):
         input_layout = QHBoxLayout(self) #Layout is used to size or manage the widgets
         total_layout = QHBoxLayout(self)
 
+        self.username_label = QLabel(f"User Name : {username if username else ""}")
+        self.username_label.setFont(QFont("San Francisco",14))
+        layout.insertWidget(0,self.username_label)
 
         #the input for product name , price and quantity
         self.product_name = QLineEdit()
@@ -260,6 +264,96 @@ class InvoiceManager(QWidget):
 
 
 
+class Login(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Smart Invoice")
+        self.setGeometry(300, 200, 400, 450)
+
+        palette = QPalette()
+        palette.setColor(QPalette.Window,QColor("#D3DAD9"))
+        self.setPalette(palette)
+
+        layout = QVBoxLayout(self)
+
+        self.title_label = QLabel("Smart Invoice")
+        self.title_label.setFont(QFont("Helvetica [Cronyx]",24,QFont.Bold))
+        self.title_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.title_label)
+
+        self.username_entry = QLineEdit()
+        self.username_entry.setPlaceholderText("User Name...")
+        self.username_entry.setFont(QFont("San Francisco",14))
+        layout.addWidget(self.username_entry)
+        self.username_entry.setStyleSheet("""
+                    QLineEdit {
+                        border: 2px solid #715A5A;
+                        border-radius: 10px;
+                        padding: 8px;
+                        background: #ffffff;
+                    }
+                """)
+
+        self.password_entry = QLineEdit()
+        self.password_entry.setPlaceholderText("User Password...")
+        self.password_entry.setEchoMode(QLineEdit.Password)
+        self.password_entry.setFont(QFont("San Francisco",14))
+        layout.addWidget(self.password_entry)
+        self.password_entry.setStyleSheet("""
+                            QLineEdit {
+                                border: 2px solid #715A5A;
+                                border-radius: 10px;
+                                padding: 8px;
+                                background: #ffffff;
+                            }
+                        """)
+
+        self.login_btn = QPushButton("Login")
+        self.login_btn.clicked.connect(self.check)
+        self.login_btn.setFont(QFont("San Francisco",14))
+        layout.addWidget(self.login_btn)
+        self.login_btn.setStyleSheet("""
+                        QPushButton {
+                            background-color: #715A5A;
+                            color: white;
+                            border-radius: 10px;
+                            padding: 10px 24px;
+                        }
+                        QPushButton:hover {
+                            background-color: #44444E;
+                        }
+                    """)
+
+
+    def check(self):
+        username = self.username_entry.text().strip()
+        password = self.password_entry.text().strip()
+
+        new_dict = {"osama":"1234","abood":"1122"}
+
+        if username in new_dict and new_dict[username] == password:
+            self.hide()
+            self.manager = InvoiceManager(username)
+            self.manager.show()
+        else:
+            QMessageBox.warning(self, "Error", "Invalid username or password!")
+            return
+
+        """ 
+        if username == "Admin" and password == "1234":
+            self.hide()
+            self.manager = InvoiceManager(username)
+            self.manager.show()
+        else:
+            QMessageBox.warning(self,"Error","Invalid username or password!")
+            return
+        """
+
+
+
+
+
+
 
 
 
@@ -267,7 +361,7 @@ class InvoiceManager(QWidget):
 # to run the app
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    w = InvoiceManager()
+    w = Login()
     w.show()
     sys.exit(app.exec_())
 
