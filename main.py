@@ -1,8 +1,8 @@
 import sys
 import csv
 import os
-from PyQt5.QtWidgets import (QApplication,QVBoxLayout,QHBoxLayout,QWidget,QPushButton,QLineEdit,QLabel,QTableWidget,QTableWidgetItem,QMessageBox)
-from PyQt5.QtGui import QPalette , QFont , QColor
+from PyQt5.QtWidgets import (QApplication,QVBoxLayout,QHBoxLayout,QWidget,QPushButton,QLineEdit,QLabel,QTableWidget,QTableWidgetItem,QMessageBox,QShortcut)
+from PyQt5.QtGui import QPalette , QFont , QColor , QKeySequence
 from PyQt5.QtCore import Qt
 
 
@@ -10,7 +10,7 @@ class InvoiceManager(QWidget):
     def __init__(self,username = None):
         super().__init__()
         self.setWindowTitle("Smart Invoice")  #the app title
-        self.setGeometry(300,200,800,500) #app size
+        self.setGeometry(300,200,900,500) #app size
 
         palette = QPalette()
         palette.setColor(QPalette.Window,QColor("#D3DAD9")) #app color
@@ -149,6 +149,41 @@ class InvoiceManager(QWidget):
                 }
             """)
 
+        self.clear_all = QPushButton("Clear All")
+        self.clear_all.clicked.connect(self.clear)
+        self.clear_all.setFont(QFont("San Francisco",14))
+        input_layout.addWidget(self.clear_all)
+        self.clear_all.setStyleSheet("""
+                        QPushButton {
+                            background-color: #715A5A;
+                            color: white;
+                            border-radius: 10px;
+                            padding: 10px 24px;
+                        }
+                        QPushButton:hover {
+                            background-color: #44444E;
+                        
+                    """)
+
+
+        # Keyboard Shortcuts
+        shortcut_add = QShortcut(QKeySequence("Return"), self)
+        shortcut_add.activated.connect(self.add)
+
+        shortcut_delete = QShortcut(QKeySequence("Delete"), self)
+        shortcut_delete.activated.connect(self.delete)
+
+        shortcut_delete1 = QShortcut(QKeySequence("Backspace"), self)
+        shortcut_delete1.activated.connect(self.delete)
+
+        shortcut_clear = QShortcut(QKeySequence("Ctrl+L"), self)
+        shortcut_clear.activated.connect(self.clear)
+
+        shortcut_total = QShortcut(QKeySequence("Ctrl+T"), self)
+        shortcut_total.activated.connect(self.total)
+
+
+
         #adding the other layout to the main one
         layout.addLayout(input_layout)
         layout.addLayout(total_layout)
@@ -178,8 +213,11 @@ class InvoiceManager(QWidget):
             total = price * qty
         except ValueError:
             QMessageBox.warning(self,"Error","Please add a valid number")
+            return
         except Exception as e:
             QMessageBox.warning(self,"Error",f"Error: {e}")
+            return
+
 
         if price < 0 or qty < 0:
             QMessageBox.warning(self,"Error","The number must be greater then Zero")
@@ -222,11 +260,36 @@ class InvoiceManager(QWidget):
         row = self.table.currentRow()
 
         #if there is a selected row
-        if row != -1:
+        if row == -1:
+            QMessageBox.warning(self,"Error","Please select a row!")
+
+        reply = QMessageBox.question(self,"Confirm delete","Are you sure you want to delete this item?",QMessageBox.Yes , QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
             self.table.removeRow(row)
         else:
-            QMessageBox.warning(self,"Error","Please select a row")
+            return
+
         self.save_file()
+
+
+    def clear(self):
+        table = self.table
+
+        if table.rowCount() == 0:
+            QMessageBox.information(self,"Info","There is no data to clear.")
+
+        reply = QMessageBox.question(self, "Confirm delete", "Are you sure you want to clear all items?", QMessageBox.Yes , QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            table.setRowCount(0)
+        else:
+            return
+
+        self.save_file()
+
+
+
 
 
     # save the app data in a file
@@ -277,7 +340,7 @@ class Login(QWidget):
         layout = QVBoxLayout(self)
 
         self.title_label = QLabel("Smart Invoice")
-        self.title_label.setFont(QFont("Helvetica [Cronyx]",24,QFont.Bold))
+        self.title_label.setFont(QFont("Helvetica [Crony]",24,QFont.Bold))
         self.title_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.title_label)
 
@@ -329,7 +392,7 @@ class Login(QWidget):
         username = self.username_entry.text().strip()
         password = self.password_entry.text().strip()
 
-        new_dict = {"osama":"1234","abood":"1122"}
+        new_dict = {"osama":"1234","abood":"1122","hashem":"7777"}
 
         if username in new_dict and new_dict[username] == password:
             self.hide()
