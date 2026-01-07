@@ -1,6 +1,7 @@
 import sys
 import csv
 import os
+import requests
 from PyQt5.QtWidgets import (QApplication,QVBoxLayout,QHBoxLayout,QWidget,QPushButton,QLineEdit,QLabel,QTableWidget,QTableWidgetItem,QMessageBox,QShortcut)
 from PyQt5.QtGui import QPalette , QFont , QColor , QKeySequence
 from PyQt5.QtCore import Qt
@@ -9,6 +10,7 @@ from PyQt5.QtCore import Qt
 class InvoiceManager(QWidget):
     def __init__(self,username = None):
         super().__init__()
+        self.username = username
         self.setWindowTitle("Smart Invoice")  #the app title
         self.setGeometry(300,200,900,500) #app size
 
@@ -326,12 +328,14 @@ class InvoiceManager(QWidget):
                     self.table.setItem(row_index,c,QTableWidgetItem(values))
 
 
-
+SERVER_URL = "http://127.0.0.1:8000"
 class Login(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Smart Invoice")
         self.setGeometry(300, 200, 400, 450)
+
+        self.token = None
 
         palette = QPalette()
         palette.setColor(QPalette.Window,QColor("#D3DAD9"))
@@ -372,7 +376,7 @@ class Login(QWidget):
                         """)
 
         self.login_btn = QPushButton("Login")
-        self.login_btn.clicked.connect(self.check)
+        self.login_btn.clicked.connect(self.login)
         self.login_btn.setFont(QFont("San Francisco",14))
         layout.addWidget(self.login_btn)
         self.login_btn.setStyleSheet("""
@@ -387,35 +391,62 @@ class Login(QWidget):
                         }
                     """)
 
+        self.register_btn = QPushButton("Register")
+        self.register_btn.clicked.connect(self.register)
+        self.register_btn.setFont(QFont("San Francisco",14))
+        layout.addWidget(self.register_btn)
+        self.register_btn.setStyleSheet("""
+                                QPushButton {
+                                    background-color: #715A5A;
+                                    color: white;
+                                    border-radius: 10px;
+                                    padding: 10px 24px;
+                                }
+                                QPushButton:hover {
+                                    background-color: #44444E;
+                                }
+                            """)
 
-    def check(self):
-        username = self.username_entry.text().strip()
-        password = self.password_entry.text().strip()
 
-        new_dict = {"osama":"1234","abood":"1122","hashem":"7777"}
+    def register(self):
+        data = {
+            "username" : self.username_entry.text(),
+            "password" : self.password_entry.text()
+        }
+        try:
+            r = requests.post(f"{SERVER_URL}/register",json = data)
+            res = r.json()
 
-        if username in new_dict and new_dict[username] == password:
-            self.hide()
-            self.manager = InvoiceManager(username)
-            self.manager.show()
-        else:
-            QMessageBox.warning(self, "Error", "Invalid username or password!")
+            if "error" in res:
+                QMessageBox.warning(self,"Error",f"{res["error"]}")
+                return
+            else:
+                QMessageBox.information(self,"Success",f"{res["message"]}")
+        except Exception as e:
+            QMessageBox.critical(self,"Network Error",f"{str(e)}")
             return
 
-        """ 
-        if username == "Admin" and password == "1234":
-            self.hide()
-            self.manager = InvoiceManager(username)
-            self.manager.show()
-        else:
-            QMessageBox.warning(self,"Error","Invalid username or password!")
-            return
-        """
 
-
-
-
-
+    def login(self):
+        username = self.username_entry.text()
+        password = self.password_entry.text()
+        data = {
+            "username": username,
+            "password": password
+        }
+        r = requests.post(f"{SERVER_URL}/login", json=data)
+        res = r.json()
+        try:
+            if "token" in res:
+                self.token = res["token"]
+                QMessageBox.information(self, "success", "Login successful")
+                self.hide()
+                self.manager = InvoiceManager(username)
+                self.manager.show()
+            else:
+                QMessageBox.warning(self, "error", "Login failed. Please check your username or password.")
+        except Exception as e:
+            QMessageBox.critical(self, "Network Error", str(e))
 
 
 
